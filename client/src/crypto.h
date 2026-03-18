@@ -4,6 +4,8 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#define AES_BLOCK_SIZE 16
+
 // Extern declaration of AES key
 extern uint8_t aes_key[16];
 

@@ -9,60 +9,61 @@
 #include "crypto.h"
 #include "json.h"
 
-/* 1000 msec = 1 sec */
 #define SLEEP_TIME_MS 1000
 
+/* Timer drives LED status updates at 1 s intervals */
 K_TIMER_DEFINE(mytimer, led_timer_cb, NULL);
 
-void addIPv6Address(void);
+static void addIPv6Address(void);
 
-void main(void) {
-    // Default led configuration
+void main(void)
+{
+    /* Configure peripherals */
     configure_leds();
-
-    // Default button configuration
     configure_buttons();
 
-    // Start the periodic timer
-    k_timer_start(&mytimer, K_SECONDS(10), K_SECONDS(1));
-
-    addIPv6Address();
-
-    // Initialize CoAP
+    /* Initialize CoAP before starting the timer */
     coap_init();
 
-    // Main loop
+    /* Add a static mesh-local IPv6 address for CoAP reachability */
+    addIPv6Address();
+
+    /* Start periodic LED status timer (initial delay 10 s, period 1 s) */
+    k_timer_start(&mytimer, K_SECONDS(10), K_SECONDS(1));
+
+    /* Main loop */
     while (1) {
         k_msleep(SLEEP_TIME_MS);
     }
 }
 
-void addIPv6Address(void) {
+static void addIPv6Address(void)
+{
     otInstance *Myinstance = openthread_get_default_instance();
     if (Myinstance == NULL) {
         printk("Failed to get OpenThread instance\n");
         return;
     }
-    
-    otNetifAddress aAddress;
+
     const otMeshLocalPrefix *ml_prefix = otThreadGetMeshLocalPrefix(Myinstance);
     if (ml_prefix == NULL) {
         printk("Failed to get Mesh Local Prefix\n");
         return;
     }
 
-    uint8_t interfaceID[8] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01 };
+    otNetifAddress aAddress;
+    uint8_t interfaceID[8] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01};
 
     memcpy(&aAddress.mAddress.mFields.m8[0], ml_prefix, 8);
     memcpy(&aAddress.mAddress.mFields.m8[8], interfaceID, 8);
 
     aAddress.mPrefixLength = 64;
-    aAddress.mPreferred = true;
-    aAddress.mValid = true;
+    aAddress.mPreferred    = true;
+    aAddress.mValid        = true;
 
     otError error = otIp6AddUnicastAddress(Myinstance, &aAddress);
     if (error != OT_ERROR_NONE) {
-        printk("addIPAddress error : %d\n", error);
+        printk("addIPv6Address error: %d\n", error);
     } else {
         printk("IPv6 address added successfully\n");
     }

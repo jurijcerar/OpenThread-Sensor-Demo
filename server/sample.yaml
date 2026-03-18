@@ -1,10 +1,10 @@
 sample:
-  name: Blinky Sample
+  name: Building Automation Server
 tests:
-  sample.basic.blinky:
-    tags: LED gpio
-    filter: dt_enabled_alias_with_parent_compat("led0", "gpio-leds")
+  sample.automation.server:
+    tags: openthread coap led gpio
     depends_on: gpio
     harness: led
     integration_platforms:
-      - frdm_k64f
+      - nrf52840dk_nrf52840
+    platform_allow: nrf52840dk_nrf52840

@@ -1,9 +1,9 @@
 sample:
-  name: BME680 Sensor sample
+  name: BME680 Sensor Sample
 tests:
   sample.sensor.bme680:
+    tags: sensor openthread coap
     harness: sensor
-    tags: samples sensor
     integration_platforms:
       - nrf52840dk_nrf52840
     platform_allow: nrf52840dk_nrf52840 adafruit_feather_nrf52840

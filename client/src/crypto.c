@@ -6,7 +6,8 @@
 #define AES_KEY_SIZE 16
 #define AES_BLOCK_SIZE 16
 
-// 16-byte AES key
+/* TODO: Replace with a secure key management solution before production use.
+ * This key must match the one configured on the server side. */
 uint8_t aes_key[AES_KEY_SIZE] = {
     0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
     0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F
